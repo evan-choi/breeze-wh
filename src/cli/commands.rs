@@ -11,14 +11,14 @@ use windows_service::{
     service_manager::{ServiceManager, ServiceManagerAccess},
 };
 
-/// Quick check if the Breeze service is registered (no elevation needed).
+/// Quick check if the Breeze-WH service is registered (no elevation needed).
 pub fn check_service_exists() -> anyhow::Result<()> {
     let manager = ServiceManager::local_computer(None::<&str>, ServiceManagerAccess::CONNECT)
         .context("Failed to open service manager")?;
 
     manager
         .open_service(SERVICE_NAME, ServiceAccess::QUERY_STATUS)
-        .context("Breeze service is not installed. Run 'breeze install' first.")?;
+        .context("Breeze-WH service is not installed. Run 'breeze-wh install' first.")?;
 
     Ok(())
 }
@@ -31,16 +31,16 @@ pub fn run(args: &[String]) -> anyhow::Result<()> {
         Some("stop") => cmd_stop(),
         Some("status") => cmd_status(),
         _ => {
-            eprintln!("Breeze - Auto Windows Hello");
+            eprintln!("Breeze-WH - Auto Windows Hello");
             eprintln!();
-            eprintln!("Usage: breeze <command>");
+            eprintln!("Usage: breeze-wh <command>");
             eprintln!();
             eprintln!("Commands:");
-            eprintln!("  install    Install the Breeze service");
-            eprintln!("  uninstall  Uninstall the Breeze service");
-            eprintln!("  start      Start the Breeze service");
-            eprintln!("  stop       Stop the Breeze service");
-            eprintln!("  status     Show the Breeze service status");
+            eprintln!("  install    Install the Breeze-WH service");
+            eprintln!("  uninstall  Uninstall the Breeze-WH service");
+            eprintln!("  start      Start the Breeze-WH service");
+            eprintln!("  stop       Stop the Breeze-WH service");
+            eprintln!("  status     Show the Breeze-WH service status");
             eprintln!();
             eprintln!("Internal (used by the service):");
             eprintln!("  service    Run as Windows Service");
@@ -95,7 +95,7 @@ fn cmd_install() -> anyhow::Result<()> {
     }
 
     println!("Service '{}' installed successfully.", SERVICE_NAME);
-    println!("Run 'breeze start' to start the service.");
+    println!("Run 'breeze-wh start' to start the service.");
     Ok(())
 }
 

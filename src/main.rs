@@ -18,7 +18,7 @@ fn main() -> anyhow::Result<()> {
         Some("helper") => {
             let config = common::config::load_config()?;
             let _guard = common::logging::init_logging("helper", &config);
-            tracing::info!("Breeze helper starting");
+            tracing::info!("Breeze-WH helper starting");
             helper::automator::run(config)
         }
 

@@ -40,8 +40,8 @@ cargo install --git https://github.com/evan-choi/breeze-wh
 Then register and start the service (requires Administrator):
 
 ```powershell
-breeze install
-breeze start
+breeze-wh install
+breeze-wh start
 ```
 
 That's it. Breeze runs silently in the background.
@@ -50,17 +50,17 @@ That's it. Breeze runs silently in the background.
 
 | Command | Description |
 |---------|-------------|
-| `breeze install` | Register the Windows Service |
-| `breeze uninstall` | Stop and remove the service |
-| `breeze start` | Start the service |
-| `breeze stop` | Stop the service |
-| `breeze status` | Check service status |
+| `breeze-wh install` | Register the Windows Service |
+| `breeze-wh uninstall` | Stop and remove the service |
+| `breeze-wh start` | Start the service |
+| `breeze-wh stop` | Stop the service |
+| `breeze-wh status` | Check service status |
 
 ## Uninstall
 
 ```powershell
-breeze uninstall
-cargo uninstall breeze
+breeze-wh uninstall
+cargo uninstall breeze-wh
 ```
 
 ## How It's Built

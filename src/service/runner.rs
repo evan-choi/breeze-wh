@@ -44,7 +44,7 @@ fn run_service() -> anyhow::Result<()> {
     let config = crate::common::config::load_config()?;
     let _log_guard = crate::common::logging::init_logging("service", &config);
 
-    tracing::info!("breeze service starting");
+    tracing::info!("breeze-wh service starting");
 
     let (event_tx, event_rx) = mpsc::channel::<ServiceEvent>();
 

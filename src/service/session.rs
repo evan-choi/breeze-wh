@@ -66,7 +66,7 @@ fn get_linked_token(token: HANDLE) -> anyhow::Result<OwnedHandle> {
     }
 }
 
-/// Build the command line to launch the helper mode: `"<path-to-breeze.exe>" helper`
+/// Build the command line to launch the helper mode: `"<path-to-breeze-wh.exe>" helper`
 pub fn get_helper_command_line() -> anyhow::Result<String> {
     let exe = std::env::current_exe().context("failed to get current exe path")?;
     Ok(format!("\"{}\" helper", exe.to_string_lossy()))

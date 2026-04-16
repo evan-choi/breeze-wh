@@ -40,8 +40,8 @@ cargo install --git https://github.com/evan-choi/breeze-wh
 서비스 등록 및 시작 (관리자 권한 필요):
 
 ```powershell
-breeze install
-breeze start
+breeze-wh install
+breeze-wh start
 ```
 
 이게 끝입니다.
@@ -50,17 +50,17 @@ breeze start
 
 | 명령어 | 설명 |
 |--------|------|
-| `breeze install` | 서비스 등록 |
-| `breeze uninstall` | 서비스 중지 후 제거 |
-| `breeze start` | 서비스 시작 |
-| `breeze stop` | 서비스 중지 |
-| `breeze status` | 서비스 상태 확인 |
+| `breeze-wh install` | 서비스 등록 |
+| `breeze-wh uninstall` | 서비스 중지 후 제거 |
+| `breeze-wh start` | 서비스 시작 |
+| `breeze-wh stop` | 서비스 중지 |
+| `breeze-wh status` | 서비스 상태 확인 |
 
 ## 삭제
 
 ```powershell
-breeze uninstall
-cargo uninstall breeze
+breeze-wh uninstall
+cargo uninstall breeze-wh
 ```
 
 ## 구조

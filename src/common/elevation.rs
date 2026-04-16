@@ -42,7 +42,7 @@ pub fn elevate_and_wait() -> std::process::ExitCode {
 
     // Create a temp file for the elevated process to write its output to
     let output_file =
-        std::env::temp_dir().join(format!("breeze-elevated-{}.log", std::process::id()));
+        std::env::temp_dir().join(format!("breeze-wh-elevated-{}.log", std::process::id()));
 
     // Build args: original args + --output-file <path>
     let mut args: Vec<String> = std::env::args().skip(1).collect();
