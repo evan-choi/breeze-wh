@@ -1,46 +1,84 @@
+<div align="center">
+
 # Breeze
 
-Auto-confirm Windows Hello dialogs. Breeze runs as a Windows Service and automatically clicks the "OK" button when Windows Hello face recognition completes.
+**Stop clicking "OK" after Windows Hello recognizes you.**
 
-## Requirements
+[![CI](https://github.com/evan-choi/breeze/actions/workflows/ci.yml/badge.svg)](https://github.com/evan-choi/breeze/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue)](LICENSE-MIT)
 
-- Windows 10 / 11
-- Windows Hello face recognition configured
-- Administrator privileges (for installation)
+[English](#how-it-works) | [한국어](README.ko.md)
 
-## Installation
+</div>
+
+---
+
+Windows Hello face recognition works great — except it still asks you to click "OK" every single time. If you live alone and use your laptop at home, that extra click is just noise.
+
+**Breeze** removes it. It watches for Windows Hello credential dialogs, detects when face recognition succeeds, and auto-confirms — all in the background as a Windows Service.
+
+## How It Works
+
+```
+Windows Hello recognizes your face
+        ↓
+Credential dialog appears with "OK" button
+        ↓
+Breeze detects it via UI Automation API
+        ↓
+Confirms automatically (only for face recognition, not PIN)
+        ↓
+You're in. Zero clicks.
+```
+
+## Install
 
 ```powershell
-# Build from source
-cargo build --release
+cargo install --git https://github.com/evan-choi/breeze
+```
 
-# Install the service (requires Administrator)
+Then register and start the service (requires Administrator):
+
+```powershell
 breeze install
-
-# Start the service
 breeze start
 ```
 
-## Usage
+That's it. Breeze runs silently in the background.
 
-Once installed and started, Breeze runs in the background. When a Windows Hello face recognition dialog appears and successfully recognizes you, Breeze automatically confirms it.
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `breeze install` | Register the Windows Service |
+| `breeze uninstall` | Stop and remove the service |
+| `breeze start` | Start the service |
+| `breeze stop` | Stop the service |
+| `breeze status` | Check service status |
+
+## Uninstall
 
 ```powershell
-breeze status     # Check service status
-breeze stop       # Stop the service
-breeze uninstall  # Remove the service
+breeze uninstall
+cargo uninstall breeze
 ```
 
-## Architecture
+## How It's Built
 
-Breeze uses a two-process architecture:
+Breeze runs as a single binary with two internal modes:
 
-- **breeze-service.exe** - Windows Service (Session 0). Monitors user sessions and manages the helper process.
-- **breeze-helper.exe** - Runs in the user session. Uses Windows UI Automation to detect and auto-confirm credential dialogs.
+- **Service mode** — Runs in Session 0 as a Windows Service. Monitors user logon/logoff and spawns the helper in the user's desktop session. Restarts it automatically if it crashes (with exponential backoff).
+
+- **Helper mode** — Runs in the user session with administrator privileges. Subscribes to UI Automation focus events to detect `Credential Dialog Xaml Host` windows. When one appears, it scans the UI tree in a single pass:
+  - If `PasswordField` is present → PIN mode → **ignore**
+  - If `OkButton` is present without `PasswordField` → face recognition → **click**
+  - If `OkButton` hasn't appeared yet → watch for `StructureChanged` events until it does
+
+All detection uses language-independent `AutomationId` and `ClassName` properties, so it works regardless of your Windows display language.
 
 ## Configuration
 
-Configuration file: `C:\ProgramData\Breeze\config.toml`
+Config file: `C:\ProgramData\Breeze\config.toml` (created automatically on install)
 
 ```toml
 enabled = true
@@ -48,6 +86,14 @@ debounce_ms = 2000
 log_level = "info"
 log_max_files = 7
 ```
+
+Logs are written to `C:\ProgramData\Breeze\logs\`.
+
+## Requirements
+
+- Windows 10 / 11
+- Windows Hello with face recognition configured
+- Rust 1.85+ (to build from source)
 
 ## License
 
