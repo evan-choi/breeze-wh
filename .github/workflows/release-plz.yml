@@ -1,0 +1,63 @@
+name: Release-plz
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  # Opens/updates the "Release PR" on main
+  release-plz-pr:
+    name: Release-plz PR
+    runs-on: ubuntu-latest
+    concurrency:
+      group: release-plz-${{ github.ref }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: MarcoIeni/release-plz-action@v0
+        with:
+          command: release-pr
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+  # Publishes to crates.io + tags + creates GitHub Release when Release PR is merged
+  release-plz-release:
+    name: Release-plz release
+    runs-on: windows-latest
+    needs: release-plz-pr
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: MarcoIeni/release-plz-action@v0
+        id: release
+        with:
+          command: release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+      # Build + upload pre-built exe if a release was published
+      - name: Build release binary
+        if: ${{ steps.release.outputs.releases_created == 'true' }}
+        run: cargo build --release
+      - name: Upload exe to release
+        if: ${{ steps.release.outputs.releases_created == 'true' }}
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $tag = "v${{ fromJSON(steps.release.outputs.releases)[0].version }}"
+          $name = "breeze-wh-$tag-windows-x86_64.exe"
+          Copy-Item target/release/breeze-wh.exe $name
+          gh release upload $tag $name --repo "${{ github.repository }}"
