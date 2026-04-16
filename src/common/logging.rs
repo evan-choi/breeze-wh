@@ -1,11 +1,11 @@
-use crate::config::BreezeConfig;
+use super::config::BreezeConfig;
 use tracing_appender::non_blocking::WorkerGuard;
 use tracing_subscriber::EnvFilter;
 
 /// Initialize tracing with rolling file output.
 /// Returns a guard that must be kept alive for the logger lifetime.
 pub fn init_logging(log_prefix: &str, config: &BreezeConfig) -> WorkerGuard {
-    let log_dir = crate::constants::log_dir();
+    let log_dir = super::constants::log_dir();
     let _ = std::fs::create_dir_all(&log_dir);
 
     let file_appender = tracing_appender::rolling::daily(&log_dir, log_prefix);

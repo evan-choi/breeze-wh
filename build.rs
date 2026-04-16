@@ -3,5 +3,5 @@ fn main() {
         .manifest_required()
         .unwrap();
     println!("cargo:rerun-if-changed=app.rc");
-    println!("cargo:rerun-if-changed=breeze-service.exe.manifest");
+    println!("cargo:rerun-if-changed=breeze.exe.manifest");
 }

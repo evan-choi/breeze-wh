@@ -8,9 +8,9 @@ use windows::Win32::UI::Accessibility::{
 };
 use windows::Win32::UI::WindowsAndMessaging::{DispatchMessageW, GetMessageW, PostQuitMessage, MSG};
 
-use breeze_common::config::BreezeConfig;
+use crate::common::config::BreezeConfig;
 
-use crate::handlers::{FocusHandler, SharedState};
+use super::handlers::{FocusHandler, SharedState};
 
 pub fn run(config: BreezeConfig) -> anyhow::Result<()> {
     unsafe {

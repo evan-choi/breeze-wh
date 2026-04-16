@@ -1,5 +1,5 @@
 use anyhow::Context;
-use breeze_common::{
+use crate::common::{
     config::BreezeConfig,
     constants::{SERVICE_DISPLAY_NAME, SERVICE_NAME, config_path, data_dir},
 };
@@ -11,9 +11,8 @@ use windows_service::{
     service_manager::{ServiceManager, ServiceManagerAccess},
 };
 
-fn main() -> anyhow::Result<()> {
-    let args: Vec<String> = std::env::args().collect();
-    match args.get(1).map(|s| s.as_str()) {
+pub fn run(args: &[String]) -> anyhow::Result<()> {
+    match args.first().map(|s| s.as_str()) {
         Some("install") => cmd_install(),
         Some("uninstall") => cmd_uninstall(),
         Some("start") => cmd_start(),
@@ -30,6 +29,10 @@ fn main() -> anyhow::Result<()> {
             eprintln!("  start      Start the Breeze service");
             eprintln!("  stop       Stop the Breeze service");
             eprintln!("  status     Show the Breeze service status");
+            eprintln!();
+            eprintln!("Internal (used by the service):");
+            eprintln!("  service    Run as Windows Service");
+            eprintln!("  helper     Run the UI Automation helper");
             std::process::exit(1);
         }
     }
@@ -37,8 +40,7 @@ fn main() -> anyhow::Result<()> {
 
 fn cmd_install() -> anyhow::Result<()> {
     let service_exe = std::env::current_exe()
-        .context("Failed to resolve current executable path")?
-        .with_file_name("breeze-service.exe");
+        .context("Failed to resolve current executable path")?;
 
     let manager = ServiceManager::local_computer(
         None::<&str>,
@@ -53,7 +55,7 @@ fn cmd_install() -> anyhow::Result<()> {
         start_type: ServiceStartType::AutoStart,
         error_control: ServiceErrorControl::Normal,
         executable_path: service_exe,
-        launch_arguments: vec![],
+        launch_arguments: vec!["service".into()],
         dependencies: vec![],
         account_name: None,
         account_password: None,
@@ -81,6 +83,7 @@ fn cmd_install() -> anyhow::Result<()> {
     }
 
     println!("Service '{}' installed successfully.", SERVICE_NAME);
+    println!("Run 'breeze start' to start the service.");
     Ok(())
 }
 
@@ -96,7 +99,6 @@ fn cmd_uninstall() -> anyhow::Result<()> {
         )
         .context("Failed to open service (is it installed?)")?;
 
-    // Attempt to stop the service; ignore errors if already stopped.
     let status = service
         .query_status()
         .context("Failed to query service status")?;
@@ -125,7 +127,7 @@ fn cmd_start() -> anyhow::Result<()> {
         .context("Failed to open service (is it installed?)")?;
 
     service
-        .start(&[] as &[&str])
+        .start(&["service"])
         .context("Failed to start service")?;
 
     println!("Service '{}' started.", SERVICE_NAME);

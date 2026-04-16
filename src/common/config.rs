@@ -1,4 +1,4 @@
-use crate::constants;
+use super::constants;
 
 #[derive(Debug, Clone, serde::Deserialize, serde::Serialize)]
 #[serde(default)]

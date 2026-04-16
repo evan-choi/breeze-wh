@@ -11,9 +11,9 @@ use windows::Win32::UI::Accessibility::{
 };
 use windows_core::Ref;
 
-use breeze_common::constants::CREDENTIAL_DIALOG_CLASS;
+use crate::common::constants::CREDENTIAL_DIALOG_CLASS;
 
-use crate::dialog;
+use super::dialog;
 
 /// Tracks a registered StructureChangedEventHandler for cleanup.
 struct RegisteredHandler {

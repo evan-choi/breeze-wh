@@ -3,9 +3,9 @@ use std::time::Instant;
 use windows::Win32::Foundation::WAIT_TIMEOUT;
 use windows::Win32::System::Threading::{TerminateProcess, WaitForSingleObject};
 
-use breeze_common::constants::{BACKOFF_INITIAL_MS, BACKOFF_MAX_MS, BACKOFF_RESET_AFTER_MS};
+use crate::common::constants::{BACKOFF_INITIAL_MS, BACKOFF_MAX_MS, BACKOFF_RESET_AFTER_MS};
 
-use crate::session::{self, OwnedHandle};
+use super::session::{self, OwnedHandle};
 
 pub struct Supervisor {
     helper_handle: Option<OwnedHandle>,
@@ -26,8 +26,8 @@ impl Supervisor {
 
     /// Launch the helper process in the active user session.
     pub fn start(&mut self) -> anyhow::Result<()> {
-        let exe = session::get_helper_exe_path()?;
-        let (pid, handle) = session::launch_in_user_session(&exe)?;
+        let cmd = session::get_helper_command_line()?;
+        let (pid, handle) = session::launch_in_user_session(&cmd)?;
         tracing::info!(pid, "helper process started");
         self.helper_handle = Some(handle);
         self.last_start = Some(Instant::now());

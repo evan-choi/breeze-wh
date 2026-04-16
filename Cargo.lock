@@ -33,50 +33,18 @@ dependencies = [
 ]
 
 [[package]]
-name = "breeze-cli"
+name = "breeze"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "breeze-common",
- "toml 0.8.23",
- "windows-service",
-]
-
-[[package]]
-name = "breeze-common"
-version = "0.1.0"
-dependencies = [
- "anyhow",
+ "ctrlc",
+ "embed-resource",
  "serde",
  "thiserror",
  "toml 0.8.23",
  "tracing",
  "tracing-appender",
  "tracing-subscriber",
- "windows-core",
-]
-
-[[package]]
-name = "breeze-helper"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "breeze-common",
- "ctrlc",
- "embed-resource",
- "tracing",
- "windows",
- "windows-core",
-]
-
-[[package]]
-name = "breeze-service"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "breeze-common",
- "embed-resource",
- "tracing",
  "windows",
  "windows-core",
  "windows-service",

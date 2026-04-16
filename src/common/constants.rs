@@ -4,7 +4,6 @@ pub const PASSWORD_FIELD_AUTOMATION_ID: &str = "PasswordField_4";
 
 pub const SERVICE_NAME: &str = "Breeze";
 pub const SERVICE_DISPLAY_NAME: &str = "Breeze - Auto Windows Hello";
-pub const HELPER_EXE_NAME: &str = "breeze-helper.exe";
 
 pub const DEBOUNCE_MS: u64 = 2000;
 pub const SUPERVISOR_POLL_INTERVAL_MS: u64 = 2000;

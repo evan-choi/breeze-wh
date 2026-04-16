@@ -1,4 +1,4 @@
-use breeze_common::constants::{OK_BUTTON_AUTOMATION_ID, PASSWORD_FIELD_AUTOMATION_ID};
+use crate::common::constants::{OK_BUTTON_AUTOMATION_ID, PASSWORD_FIELD_AUTOMATION_ID};
 use windows::core::{Interface, Result};
 use windows::Win32::UI::Accessibility::{
     IUIAutomation, IUIAutomationElement, IUIAutomationInvokePattern, TreeScope_Descendants,

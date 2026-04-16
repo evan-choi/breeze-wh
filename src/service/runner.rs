@@ -11,9 +11,9 @@ use windows_service::service::{
 use windows_service::service_control_handler::{self, ServiceControlHandlerResult};
 use windows_service::service_dispatcher;
 
-use breeze_common::constants::{SERVICE_NAME, SUPERVISOR_POLL_INTERVAL_MS};
+use crate::common::constants::{SERVICE_NAME, SUPERVISOR_POLL_INTERVAL_MS};
 
-use crate::supervisor::Supervisor;
+use super::supervisor::Supervisor;
 
 const SERVICE_TYPE: ServiceType = ServiceType::OWN_PROCESS;
 
@@ -41,8 +41,8 @@ fn service_main(_args: Vec<std::ffi::OsString>) {
 }
 
 fn run_service() -> anyhow::Result<()> {
-    let config = breeze_common::config::load_config()?;
-    let _log_guard = breeze_common::logging::init_logging("service", &config);
+    let config = crate::common::config::load_config()?;
+    let _log_guard = crate::common::logging::init_logging("service", &config);
 
     tracing::info!("breeze service starting");
 

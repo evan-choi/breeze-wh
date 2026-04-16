@@ -11,8 +11,6 @@ use windows::Win32::System::Threading::{
     CreateProcessAsUserW, PROCESS_INFORMATION, STARTUPINFOW,
 };
 
-use breeze_common::constants::HELPER_EXE_NAME;
-
 /// RAII wrapper around a Win32 HANDLE that calls CloseHandle on drop.
 pub struct OwnedHandle(pub HANDLE);
 
@@ -32,12 +30,10 @@ impl Drop for OwnedHandle {
     }
 }
 
-/// Resolve the path to breeze-helper.exe adjacent to the running service binary.
-pub fn get_helper_exe_path() -> anyhow::Result<String> {
+/// Build the command line to launch the helper mode: `"<path-to-breeze.exe>" helper`
+pub fn get_helper_command_line() -> anyhow::Result<String> {
     let exe = std::env::current_exe().context("failed to get current exe path")?;
-    let dir = exe.parent().context("exe has no parent directory")?;
-    let helper = dir.join(HELPER_EXE_NAME);
-    Ok(helper.to_string_lossy().into_owned())
+    Ok(format!("\"{}\" helper", exe.to_string_lossy()))
 }
 
 /// Launch a process in the active console user session.

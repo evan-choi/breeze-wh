@@ -1,16 +1,16 @@
-[workspace]
-resolver = "2"
-members = ["crates/*"]
-
-[workspace.package]
+[package]
+name = "breeze"
 version = "0.1.0"
 edition = "2024"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/evan-choi/breeze"
+description = "Auto-confirm Windows Hello dialogs"
+readme = "README.md"
+keywords = ["windows-hello", "automation", "windows-service", "biometric"]
+categories = ["command-line-utilities", "os::windows-apis"]
 rust-version = "1.85"
 
-[workspace.dependencies]
-windows = "0.61"
+[dependencies]
 windows-core = "0.61"
 windows-service = "0.8"
 anyhow = "1"
@@ -20,5 +20,19 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 tracing-appender = "0.2"
 serde = { version = "1", features = ["derive"] }
 toml = "0.8"
-embed-resource = "3"
 ctrlc = "3"
+
+[dependencies.windows]
+version = "0.61"
+features = [
+    "Win32_UI_Accessibility",
+    "Win32_System_Com",
+    "Win32_Foundation",
+    "Win32_UI_WindowsAndMessaging",
+    "Win32_System_Threading",
+    "Win32_Security",
+    "Win32_System_RemoteDesktop",
+]
+
+[build-dependencies]
+embed-resource = "3"
