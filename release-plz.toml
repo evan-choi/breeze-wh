@@ -1,0 +1,20 @@
+[workspace]
+# Enable GitHub Release creation on publish
+git_release_enable = true
+# Add GitHub Release body from CHANGELOG
+git_release_body = """
+{{ changelog }}
+
+## Install
+
+```powershell
+cargo install breeze-wh
+```
+
+Or download the pre-built binary below.
+"""
+
+[[package]]
+name = "breeze-wh"
+# Semver bump strategy: patch for fixes, minor for features (conventional commits)
+semver_check = false
