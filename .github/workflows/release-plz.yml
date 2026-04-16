@@ -21,7 +21,7 @@ jobs:
         with:
           fetch-depth: 0
       - uses: dtolnay/rust-toolchain@stable
-      - uses: MarcoIeni/release-plz-action@v0
+      - uses: release-plz/action@v0.5
         with:
           command: release-pr
         env:
@@ -39,7 +39,7 @@ jobs:
           fetch-depth: 0
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
-      - uses: MarcoIeni/release-plz-action@v0
+      - uses: release-plz/action@v0.5
         id: release
         with:
           command: release
