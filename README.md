@@ -37,26 +37,14 @@ You're in. Zero clicks.
 ```powershell
 cargo install breeze-wh
 breeze-wh install
-breeze-wh start
 ```
 
 That's it. Breeze runs silently in the background.
-
-## Commands
-
-| Command | Description |
-|---------|-------------|
-| `breeze-wh install` | Register the Windows Service |
-| `breeze-wh uninstall` | Stop and remove the service |
-| `breeze-wh start` | Start the service |
-| `breeze-wh stop` | Stop the service |
-| `breeze-wh status` | Check service status |
 
 ## Uninstall
 
 ```powershell
 breeze-wh uninstall
-cargo uninstall breeze-wh
 ```
 
 ## How It's Built

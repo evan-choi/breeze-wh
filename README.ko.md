@@ -37,26 +37,14 @@ Breeze가 UI Automation API로 감지
 ```powershell
 cargo install breeze-wh
 breeze-wh install
-breeze-wh start
 ```
 
-이게 끝입니다.
-
-## 명령어
-
-| 명령어 | 설명 |
-|--------|------|
-| `breeze-wh install` | 서비스 등록 |
-| `breeze-wh uninstall` | 서비스 중지 후 제거 |
-| `breeze-wh start` | 서비스 시작 |
-| `breeze-wh stop` | 서비스 중지 |
-| `breeze-wh status` | 서비스 상태 확인 |
+끝입니다.
 
 ## 삭제
 
 ```powershell
 breeze-wh uninstall
-cargo uninstall breeze-wh
 ```
 
 ## 구조
