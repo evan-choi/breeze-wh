@@ -15,7 +15,20 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - run: cargo build --release
       - name: Publish to crates.io
-        run: cargo publish --token ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        shell: pwsh
+        run: |
+          $output = cargo publish 2>&1
+          $exit = $LASTEXITCODE
+          $output | Write-Output
+          if ($exit -ne 0) {
+            if ($output -match "already exists on crates.io") {
+              Write-Output "::notice::Version already published — skipping."
+              exit 0
+            }
+            exit $exit
+          }
       - name: Package
         shell: pwsh
         run: |
