@@ -74,7 +74,7 @@ fn cmd_install() -> anyhow::Result<()> {
     };
 
     let service = manager
-        .create_service(&info, ServiceAccess::CHANGE_CONFIG)
+        .create_service(&info, ServiceAccess::CHANGE_CONFIG | ServiceAccess::START)
         .context("Failed to create service")?;
 
     service
@@ -95,7 +95,13 @@ fn cmd_install() -> anyhow::Result<()> {
     }
 
     println!("Service '{}' installed successfully.", SERVICE_NAME);
-    println!("Run 'breeze-wh start' to start the service.");
+
+    // Auto-start the service
+    service
+        .start(&["service"])
+        .context("Service installed but failed to start")?;
+
+    println!("Service '{}' started.", SERVICE_NAME);
     Ok(())
 }
 
