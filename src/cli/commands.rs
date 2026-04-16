@@ -1,8 +1,8 @@
-use anyhow::Context;
 use crate::common::{
     config::BreezeConfig,
     constants::{SERVICE_DISPLAY_NAME, SERVICE_NAME, config_path, data_dir},
 };
+use anyhow::Context;
 use windows_service::{
     service::{
         ServiceAccess, ServiceErrorControl, ServiceInfo, ServiceStartType, ServiceState,
@@ -39,8 +39,8 @@ pub fn run(args: &[String]) -> anyhow::Result<()> {
 }
 
 fn cmd_install() -> anyhow::Result<()> {
-    let service_exe = std::env::current_exe()
-        .context("Failed to resolve current executable path")?;
+    let service_exe =
+        std::env::current_exe().context("Failed to resolve current executable path")?;
 
     let manager = ServiceManager::local_computer(
         None::<&str>,
@@ -88,9 +88,8 @@ fn cmd_install() -> anyhow::Result<()> {
 }
 
 fn cmd_uninstall() -> anyhow::Result<()> {
-    let manager =
-        ServiceManager::local_computer(None::<&str>, ServiceManagerAccess::CONNECT)
-            .context("Failed to open service manager (try running as Administrator)")?;
+    let manager = ServiceManager::local_computer(None::<&str>, ServiceManagerAccess::CONNECT)
+        .context("Failed to open service manager (try running as Administrator)")?;
 
     let service = manager
         .open_service(
@@ -109,18 +108,15 @@ fn cmd_uninstall() -> anyhow::Result<()> {
         eprintln!("Warning: could not stop service before deletion: {e}");
     }
 
-    service
-        .delete()
-        .context("Failed to delete service")?;
+    service.delete().context("Failed to delete service")?;
 
     println!("Service '{}' uninstalled successfully.", SERVICE_NAME);
     Ok(())
 }
 
 fn cmd_start() -> anyhow::Result<()> {
-    let manager =
-        ServiceManager::local_computer(None::<&str>, ServiceManagerAccess::CONNECT)
-            .context("Failed to open service manager (try running as Administrator)")?;
+    let manager = ServiceManager::local_computer(None::<&str>, ServiceManagerAccess::CONNECT)
+        .context("Failed to open service manager (try running as Administrator)")?;
 
     let service = manager
         .open_service(SERVICE_NAME, ServiceAccess::START)
@@ -135,26 +131,22 @@ fn cmd_start() -> anyhow::Result<()> {
 }
 
 fn cmd_stop() -> anyhow::Result<()> {
-    let manager =
-        ServiceManager::local_computer(None::<&str>, ServiceManagerAccess::CONNECT)
-            .context("Failed to open service manager (try running as Administrator)")?;
+    let manager = ServiceManager::local_computer(None::<&str>, ServiceManagerAccess::CONNECT)
+        .context("Failed to open service manager (try running as Administrator)")?;
 
     let service = manager
         .open_service(SERVICE_NAME, ServiceAccess::STOP)
         .context("Failed to open service (is it installed?)")?;
 
-    service
-        .stop()
-        .context("Failed to stop service")?;
+    service.stop().context("Failed to stop service")?;
 
     println!("Service '{}' stopped.", SERVICE_NAME);
     Ok(())
 }
 
 fn cmd_status() -> anyhow::Result<()> {
-    let manager =
-        ServiceManager::local_computer(None::<&str>, ServiceManagerAccess::CONNECT)
-            .context("Failed to open service manager")?;
+    let manager = ServiceManager::local_computer(None::<&str>, ServiceManagerAccess::CONNECT)
+        .context("Failed to open service manager")?;
 
     let service = manager
         .open_service(SERVICE_NAME, ServiceAccess::QUERY_STATUS)

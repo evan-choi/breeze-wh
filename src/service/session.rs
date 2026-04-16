@@ -1,15 +1,13 @@
-use anyhow::{bail, Context};
+use anyhow::{Context, bail};
 use std::ffi::OsStr;
 use std::os::windows::ffi::OsStrExt;
-use windows::core::PWSTR;
 use windows::Win32::Foundation::{CloseHandle, HANDLE};
 use windows::Win32::Security::{
-    DuplicateTokenEx, SecurityImpersonation, TokenPrimary, TOKEN_ALL_ACCESS,
+    DuplicateTokenEx, SecurityImpersonation, TOKEN_ALL_ACCESS, TokenPrimary,
 };
 use windows::Win32::System::RemoteDesktop::{WTSGetActiveConsoleSessionId, WTSQueryUserToken};
-use windows::Win32::System::Threading::{
-    CreateProcessAsUserW, PROCESS_INFORMATION, STARTUPINFOW,
-};
+use windows::Win32::System::Threading::{CreateProcessAsUserW, PROCESS_INFORMATION, STARTUPINFOW};
+use windows::core::PWSTR;
 
 /// RAII wrapper around a Win32 HANDLE that calls CloseHandle on drop.
 pub struct OwnedHandle(pub HANDLE);

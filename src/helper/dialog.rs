@@ -1,9 +1,9 @@
 use crate::common::constants::{OK_BUTTON_AUTOMATION_ID, PASSWORD_FIELD_AUTOMATION_ID};
-use windows::core::{Interface, Result};
 use windows::Win32::UI::Accessibility::{
     IUIAutomation, IUIAutomationElement, IUIAutomationInvokePattern, TreeScope_Descendants,
-    UIA_ButtonControlTypeId, UIA_InvokePatternId, UIA_CONTROLTYPE_ID,
+    UIA_ButtonControlTypeId, UIA_CONTROLTYPE_ID, UIA_InvokePatternId,
 };
+use windows::core::{Interface, Result};
 
 /// Result of scanning a credential dialog's UI tree in a single pass.
 pub struct DialogScanResult {

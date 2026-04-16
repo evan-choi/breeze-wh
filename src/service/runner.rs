@@ -107,7 +107,10 @@ fn run_service() -> anyhow::Result<()> {
     // Check for an existing active console session on startup
     let session_id = unsafe { WTSGetActiveConsoleSessionId() };
     if session_id != 0xFFFFFFFF {
-        tracing::info!(session_id, "active console session found, starting supervisor");
+        tracing::info!(
+            session_id,
+            "active console session found, starting supervisor"
+        );
         if let Err(e) = supervisor.start() {
             tracing::error!("failed to start supervisor on startup: {e:#}");
         }

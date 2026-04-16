@@ -1,7 +1,6 @@
 use std::sync::{Arc, Mutex};
 use std::time::Instant;
 
-use windows::core::{implement, Result};
 use windows::Win32::System::Com::SAFEARRAY;
 use windows::Win32::System::Threading::GetCurrentProcessId;
 use windows::Win32::UI::Accessibility::{
@@ -9,6 +8,7 @@ use windows::Win32::UI::Accessibility::{
     IUIAutomationFocusChangedEventHandler_Impl, IUIAutomationStructureChangedEventHandler,
     IUIAutomationStructureChangedEventHandler_Impl, StructureChangeType, TreeScope_Subtree,
 };
+use windows::core::{Result, implement};
 use windows_core::Ref;
 
 use crate::common::constants::CREDENTIAL_DIALOG_CLASS;
@@ -202,10 +202,7 @@ pub struct FocusHandler {
 }
 
 impl IUIAutomationFocusChangedEventHandler_Impl for FocusHandler_Impl {
-    fn HandleFocusChangedEvent(
-        &self,
-        sender: Ref<'_, IUIAutomationElement>,
-    ) -> Result<()> {
+    fn HandleFocusChangedEvent(&self, sender: Ref<'_, IUIAutomationElement>) -> Result<()> {
         let Some(element) = sender.as_ref() else {
             return Ok(());
         };
