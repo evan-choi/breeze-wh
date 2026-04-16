@@ -4,7 +4,7 @@
 
 **Windows Hello 얼굴 인식 후 "확인" 클릭, 이제 필요 없습니다.**
 
-[![CI](https://github.com/evan-choi/breeze/actions/workflows/ci.yml/badge.svg)](https://github.com/evan-choi/breeze/actions/workflows/ci.yml)
+[![CI](https://github.com/evan-choi/breeze-wh/actions/workflows/ci.yml/badge.svg)](https://github.com/evan-choi/breeze-wh/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue)](LICENSE-MIT)
 
 [English](README.md) | [한국어](#어떻게-동작하나요)
@@ -34,7 +34,7 @@ Breeze가 UI Automation API로 감지
 ## 설치
 
 ```powershell
-cargo install --git https://github.com/evan-choi/breeze
+cargo install --git https://github.com/evan-choi/breeze-wh
 ```
 
 서비스 등록 및 시작 (관리자 권한 필요):

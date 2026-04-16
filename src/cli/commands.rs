@@ -11,6 +11,18 @@ use windows_service::{
     service_manager::{ServiceManager, ServiceManagerAccess},
 };
 
+/// Quick check if the Breeze service is registered (no elevation needed).
+pub fn check_service_exists() -> anyhow::Result<()> {
+    let manager = ServiceManager::local_computer(None::<&str>, ServiceManagerAccess::CONNECT)
+        .context("Failed to open service manager")?;
+
+    manager
+        .open_service(SERVICE_NAME, ServiceAccess::QUERY_STATUS)
+        .context("Breeze service is not installed. Run 'breeze install' first.")?;
+
+    Ok(())
+}
+
 pub fn run(args: &[String]) -> anyhow::Result<()> {
     match args.first().map(|s| s.as_str()) {
         Some("install") => cmd_install(),

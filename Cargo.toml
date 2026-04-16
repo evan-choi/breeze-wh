@@ -1,9 +1,9 @@
 [package]
-name = "breeze"
+name = "breeze-wh"
 version = "0.1.0"
 edition = "2024"
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/evan-choi/breeze"
+repository = "https://github.com/evan-choi/breeze-wh"
 description = "Auto-confirm Windows Hello dialogs"
 readme = "README.md"
 keywords = ["windows-hello", "automation", "windows-service", "biometric"]
@@ -32,6 +32,9 @@ features = [
     "Win32_System_Threading",
     "Win32_Security",
     "Win32_System_RemoteDesktop",
+    "Win32_UI_Shell",
+    "Win32_System_Registry",
+    "Win32_System_Console",
 ]
 
 [build-dependencies]
