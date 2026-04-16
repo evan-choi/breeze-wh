@@ -13,9 +13,9 @@
 
 ---
 
-Windows Hello face recognition works great — except it still asks you to click "OK" every single time. If you live alone and use your laptop at home, that extra click is just noise.
+Windows Hello face recognition works great — except it still asks you to click "OK" every single time. That extra click is just noise.
 
-**Breeze** removes it. It watches for Windows Hello credential dialogs, detects when face recognition succeeds, and auto-confirms — all in the background as a Windows Service.
+**Breeze** removes it. It monitors Windows Hello credential dialogs, detects successful face recognition, and auto-confirms — silently, as a Windows Service.
 
 ## How It Works
 
