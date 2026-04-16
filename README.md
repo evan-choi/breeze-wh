@@ -5,6 +5,7 @@
 **Stop clicking "OK" after Windows Hello recognizes you.**
 
 [![CI](https://github.com/evan-choi/breeze-wh/actions/workflows/ci.yml/badge.svg)](https://github.com/evan-choi/breeze-wh/actions/workflows/ci.yml)
+[![Crates.io](https://img.shields.io/crates/v/breeze-wh)](https://crates.io/crates/breeze-wh)
 [![License](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue)](LICENSE-MIT)
 
 [English](#how-it-works) | [한국어](README.ko.md)
@@ -34,12 +35,7 @@ You're in. Zero clicks.
 ## Install
 
 ```powershell
-cargo install --git https://github.com/evan-choi/breeze-wh
-```
-
-Then register and start the service (requires Administrator):
-
-```powershell
+cargo install breeze-wh
 breeze-wh install
 breeze-wh start
 ```
@@ -65,20 +61,20 @@ cargo uninstall breeze-wh
 
 ## How It's Built
 
-Breeze runs as a single binary with two internal modes:
+Breeze is a single binary that runs in two modes:
 
-- **Service mode** — Runs in Session 0 as a Windows Service. Monitors user logon/logoff and spawns the helper in the user's desktop session. Restarts it automatically if it crashes (with exponential backoff).
+- **Service mode** — Runs in Session 0 as a Windows Service. Detects user logon/logoff and spawns the helper in the user's desktop session. Automatically restarts it on crash with exponential backoff.
 
-- **Helper mode** — Runs in the user session with administrator privileges. Subscribes to UI Automation focus events to detect `Credential Dialog Xaml Host` windows. When one appears, it scans the UI tree in a single pass:
-  - If `PasswordField` is present → PIN mode → **ignore**
-  - If `OkButton` is present without `PasswordField` → face recognition → **click**
-  - If `OkButton` hasn't appeared yet → watch for `StructureChanged` events until it does
+- **Helper mode** — Runs in the user session with elevated privileges. Subscribes to UI Automation focus events to detect `Credential Dialog Xaml Host` windows. On detection, scans the UI tree in a single pass:
+  - `PasswordField` present → PIN mode → **skip**
+  - `OkButton` present without `PasswordField` → face recognition → **click**
+  - `OkButton` not yet visible → watch `StructureChanged` events until it appears
 
 All detection uses language-independent `AutomationId` and `ClassName` properties, so it works regardless of your Windows display language.
 
 ## Configuration
 
-Config file: `C:\ProgramData\Breeze\config.toml` (created automatically on install)
+Config file: `C:\ProgramData\Breeze-WH\config.toml` (created on install)
 
 ```toml
 enabled = true
@@ -87,13 +83,13 @@ log_level = "info"
 log_max_files = 7
 ```
 
-Logs are written to `C:\ProgramData\Breeze\logs\`.
+Logs: `C:\ProgramData\Breeze-WH\logs\`
 
 ## Requirements
 
 - Windows 10 / 11
-- Windows Hello with face recognition configured
-- Rust 1.85+ (to build from source)
+- Windows Hello face recognition configured
+- [Rust](https://rustup.rs/) toolchain (to install via cargo)
 
 ## License
 

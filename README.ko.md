@@ -5,6 +5,7 @@
 **Windows Hello 얼굴 인식 후 "확인" 클릭, 이제 필요 없습니다.**
 
 [![CI](https://github.com/evan-choi/breeze-wh/actions/workflows/ci.yml/badge.svg)](https://github.com/evan-choi/breeze-wh/actions/workflows/ci.yml)
+[![Crates.io](https://img.shields.io/crates/v/breeze-wh)](https://crates.io/crates/breeze-wh)
 [![License](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue)](LICENSE-MIT)
 
 [English](README.md) | [한국어](#어떻게-동작하나요)
@@ -34,12 +35,7 @@ Breeze가 UI Automation API로 감지
 ## 설치
 
 ```powershell
-cargo install --git https://github.com/evan-choi/breeze-wh
-```
-
-서비스 등록 및 시작 (관리자 권한 필요):
-
-```powershell
+cargo install breeze-wh
 breeze-wh install
 breeze-wh start
 ```
@@ -78,7 +74,7 @@ Breeze는 하나의 바이너리가 두 가지 모드로 동작합니다:
 
 ## 설정
 
-설정 파일: `C:\ProgramData\Breeze\config.toml` (설치할 때 자동 생성됨)
+설정 파일: `C:\ProgramData\Breeze-WH\config.toml` (설치 시 자동 생성)
 
 ```toml
 enabled = true
@@ -87,13 +83,13 @@ log_level = "info"
 log_max_files = 7
 ```
 
-로그: `C:\ProgramData\Breeze\logs\`
+로그: `C:\ProgramData\Breeze-WH\logs\`
 
 ## 요구 사항
 
 - Windows 10 / 11
 - Windows Hello 얼굴 인식이 설정되어 있어야 함
-- Rust 1.85+ (소스 빌드 시)
+- [Rust](https://rustup.rs/) 툴체인 (cargo로 설치 시)
 
 ## 라이선스
 
