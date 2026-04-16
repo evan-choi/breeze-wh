@@ -1,0 +1,109 @@
+use anyhow::{bail, Context};
+use std::ffi::OsStr;
+use std::os::windows::ffi::OsStrExt;
+use windows::core::PWSTR;
+use windows::Win32::Foundation::{CloseHandle, HANDLE};
+use windows::Win32::Security::{
+    DuplicateTokenEx, SecurityImpersonation, TokenPrimary, TOKEN_ALL_ACCESS,
+};
+use windows::Win32::System::RemoteDesktop::{WTSGetActiveConsoleSessionId, WTSQueryUserToken};
+use windows::Win32::System::Threading::{
+    CreateProcessAsUserW, PROCESS_INFORMATION, STARTUPINFOW,
+};
+
+use breeze_common::constants::HELPER_EXE_NAME;
+
+/// RAII wrapper around a Win32 HANDLE that calls CloseHandle on drop.
+pub struct OwnedHandle(pub HANDLE);
+
+impl OwnedHandle {
+    pub fn raw(&self) -> HANDLE {
+        self.0
+    }
+}
+
+impl Drop for OwnedHandle {
+    fn drop(&mut self) {
+        if !self.0.is_invalid() {
+            unsafe {
+                let _ = CloseHandle(self.0);
+            }
+        }
+    }
+}
+
+/// Resolve the path to breeze-helper.exe adjacent to the running service binary.
+pub fn get_helper_exe_path() -> anyhow::Result<String> {
+    let exe = std::env::current_exe().context("failed to get current exe path")?;
+    let dir = exe.parent().context("exe has no parent directory")?;
+    let helper = dir.join(HELPER_EXE_NAME);
+    Ok(helper.to_string_lossy().into_owned())
+}
+
+/// Launch a process in the active console user session.
+/// Returns (process_id, process_handle) on success.
+pub fn launch_in_user_session(exe_path: &str) -> anyhow::Result<(u32, OwnedHandle)> {
+    let session_id = unsafe { WTSGetActiveConsoleSessionId() };
+    if session_id == 0xFFFFFFFF {
+        bail!("no active console session");
+    }
+
+    // Get the user token for the active console session
+    let mut token = HANDLE::default();
+    unsafe {
+        WTSQueryUserToken(session_id, &mut token)
+            .context("WTSQueryUserToken failed — service must run as LocalSystem")?;
+    }
+    let _token_guard = OwnedHandle(token);
+
+    // Duplicate as a primary token suitable for CreateProcessAsUser
+    let mut dup_token = HANDLE::default();
+    unsafe {
+        DuplicateTokenEx(
+            token,
+            TOKEN_ALL_ACCESS,
+            None,
+            SecurityImpersonation,
+            TokenPrimary,
+            &mut dup_token,
+        )
+        .context("DuplicateTokenEx failed")?;
+    }
+    let _dup_guard = OwnedHandle(dup_token);
+
+    // Build a mutable wide-char command line (CreateProcessAsUserW may modify it)
+    let mut cmd_line: Vec<u16> = OsStr::new(exe_path)
+        .encode_wide()
+        .chain(std::iter::once(0))
+        .collect();
+
+    let si = STARTUPINFOW {
+        cb: std::mem::size_of::<STARTUPINFOW>() as u32,
+        ..Default::default()
+    };
+    let mut pi = PROCESS_INFORMATION::default();
+
+    unsafe {
+        CreateProcessAsUserW(
+            Some(dup_token),
+            None,
+            Some(PWSTR(cmd_line.as_mut_ptr())),
+            None,
+            None,
+            false,
+            Default::default(),
+            None,
+            None,
+            &si,
+            &mut pi,
+        )
+        .context("CreateProcessAsUserW failed")?;
+    }
+
+    let pid = pi.dwProcessId;
+    // Close the thread handle immediately — we only need the process handle
+    let _thread = OwnedHandle(pi.hThread);
+    let process_handle = OwnedHandle(pi.hProcess);
+
+    Ok((pid, process_handle))
+}
