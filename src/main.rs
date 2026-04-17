@@ -50,8 +50,14 @@ fn main() -> anyhow::Result<()> {
 }
 
 /// Redirects stdout and stderr to a file (used by elevated child process).
+///
+/// Holds the cloned File handles for the process lifetime — if they drop early,
+/// CloseHandle is called on the very handles just installed as STDOUT/STDERR
+/// and all subsequent println!/eprintln! writes silently fail.
 struct OutputRedirect {
     _file: std::fs::File,
+    _stdout: std::fs::File,
+    _stderr: std::fs::File,
 }
 
 impl OutputRedirect {
@@ -59,12 +65,9 @@ impl OutputRedirect {
         use std::os::windows::io::AsRawHandle;
 
         let file = std::fs::File::create(path).expect("failed to create output redirect file");
-
-        // Duplicate the handle for stderr
         let stdout_file = file.try_clone().expect("failed to clone file handle");
         let stderr_file = file.try_clone().expect("failed to clone file handle");
 
-        // Redirect using raw handles via Windows API
         unsafe {
             use windows::Win32::Foundation::HANDLE;
             use windows::Win32::System::Console::{
@@ -74,10 +77,18 @@ impl OutputRedirect {
             let _ = SetStdHandle(STD_ERROR_HANDLE, HANDLE(stderr_file.as_raw_handle() as _));
         }
 
-        // Also update Rust's stdout/stderr (they cache the handles)
-        // The actual redirection is via SetStdHandle; println!/eprintln! will pick it up
-        // after the next write since they call GetStdHandle internally.
+        Self {
+            _file: file,
+            _stdout: stdout_file,
+            _stderr: stderr_file,
+        }
+    }
+}
 
-        Self { _file: file }
+impl Drop for OutputRedirect {
+    fn drop(&mut self) {
+        use std::io::Write;
+        let _ = std::io::stdout().flush();
+        let _ = std::io::stderr().flush();
     }
 }
