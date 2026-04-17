@@ -41,11 +41,21 @@ breeze-wh install
 
 끝입니다.
 
-## 삭제
+## 명령어
 
-```powershell
-breeze-wh uninstall
-```
+| 명령어 | 설명 |
+|---|---|
+| `breeze-wh install` | 서비스 등록, 데이터 디렉터리 권한 부여, 자동 시작 |
+| `breeze-wh uninstall` | 서비스 중지 및 삭제 |
+| `breeze-wh start` | 서비스 시작 |
+| `breeze-wh stop` | 서비스 중지 |
+| `breeze-wh status` | 현재 서비스 상태 출력 |
+| `breeze-wh upgrade` | GitHub Releases에서 최신 `breeze-wh.exe`를 받아 교체 (서비스 상태 유지) |
+| `breeze-wh --version` | 설치된 버전 확인 |
+
+`install` / `uninstall` / `start` / `stop` / `upgrade`는 관리자 권한이 필요하지만, UAC로 자동 상승되므로 관리자 셸을 따로 띄울 필요는 없습니다.
+
+> **참고:** `upgrade`는 crates.io가 아니라 GitHub Release의 바이너리를 받아 갈아끼웁니다. 업그레이드 이후 cargo 레지스트리 메타데이터는 예전 버전으로 남아있을 수 있으니, 실제 설치된 버전은 `breeze-wh --version`으로 확인하세요.
 
 ## 구조
 

@@ -41,11 +41,21 @@ breeze-wh install
 
 That's it. Breeze runs silently in the background.
 
-## Uninstall
+## Commands
 
-```powershell
-breeze-wh uninstall
-```
+| Command | What it does |
+|---|---|
+| `breeze-wh install` | Register the service, grant Users access to the data dir, and start it |
+| `breeze-wh uninstall` | Stop and unregister the service |
+| `breeze-wh start` | Start the service |
+| `breeze-wh stop` | Stop the service |
+| `breeze-wh status` | Show current service state |
+| `breeze-wh upgrade` | Download the latest `breeze-wh.exe` from GitHub Releases and swap it in place (service state is preserved) |
+| `breeze-wh --version` | Print the installed version |
+
+`install` / `uninstall` / `start` / `stop` / `upgrade` all need admin rights — they auto-request elevation via UAC, you don't need to launch an elevated shell yourself.
+
+> **Note:** `upgrade` fetches the latest release binary from GitHub, not from crates.io. After an upgrade, cargo's registry metadata will still show the older version — check `breeze-wh --version` to see what's actually installed.
 
 ## How It's Built
 
