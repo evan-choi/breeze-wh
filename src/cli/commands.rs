@@ -230,7 +230,7 @@ fn cmd_upgrade() -> anyhow::Result<()> {
         println!("Already up to date (v{current_version}).");
         return Ok(());
     }
-    println!("Upgrading {current_version} -> {latest_version}");
+    println!("Upgrading breeze-wh v{current_version} -> v{latest_version}");
 
     // 2. Find the exe asset download URL
     let assets = json["assets"].as_array().context("release has no assets")?;
@@ -283,7 +283,7 @@ fn cmd_upgrade() -> anyhow::Result<()> {
     // 6. Replace current exe using the Windows rename trick
     replace_current_exe(&buf).context("Failed to replace exe")?;
 
-    println!("Upgraded to v{latest_version}.");
+    println!("Upgrade complete: v{current_version} -> v{latest_version}.");
 
     // 7. Restart service if it was running
     if was_running {
