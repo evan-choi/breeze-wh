@@ -41,6 +41,22 @@ breeze-wh install
 
 That's it. Breeze runs silently in the background.
 
+## Upgrade
+
+```powershell
+breeze-wh upgrade
+```
+
+Fetches the latest `breeze-wh.exe` from GitHub Releases and swaps it in place. The old exe is kept as `breeze-wh.exe.old` and removed on the next reboot (Windows won't let a running exe delete itself).
+
+Service state is preserved across the upgrade:
+
+- **Running** → stopped, exe replaced, started again
+- **Stopped** → exe replaced only
+- **Not installed** → exe replaced only
+
+> **Note:** `upgrade` pulls from GitHub Releases, not crates.io. After an upgrade, `cargo install --list` will still show the older version — `breeze-wh --version` reports what's actually on disk.
+
 ## Commands
 
 - `breeze-wh install` — Install and start the service
@@ -48,12 +64,10 @@ That's it. Breeze runs silently in the background.
 - `breeze-wh start` — Start the service
 - `breeze-wh stop` — Stop the service
 - `breeze-wh status` — Show current service state
-- `breeze-wh upgrade` — Download the latest `breeze-wh.exe` from GitHub Releases and swap it in place (service state is preserved)
+- `breeze-wh upgrade` — Upgrade to the latest release (see above)
 - `breeze-wh --version` — Print the installed version
 
 `install` / `uninstall` / `start` / `stop` / `upgrade` all need admin rights — they auto-request elevation via UAC, you don't need to launch an elevated shell yourself.
-
-> **Note:** `upgrade` fetches the latest release binary from GitHub, not from crates.io. After an upgrade, cargo's registry metadata will still show the older version — check `breeze-wh --version` to see what's actually installed.
 
 ## How It's Built
 

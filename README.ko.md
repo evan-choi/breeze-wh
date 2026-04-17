@@ -41,6 +41,22 @@ breeze-wh install
 
 끝입니다.
 
+## 업그레이드
+
+```powershell
+breeze-wh upgrade
+```
+
+GitHub Releases에서 최신 `breeze-wh.exe`를 받아 현재 바이너리를 교체합니다. 기존 exe는 `breeze-wh.exe.old`로 남았다가 다음 재부팅 때 정리됩니다 (실행 중인 exe는 자기 자신을 지울 수 없는 Windows 제약 때문).
+
+서비스 상태는 그대로 유지됩니다:
+
+- **실행 중** → 중지 → 교체 → 재시작
+- **중지됨** → 교체만
+- **미설치** → 교체만
+
+> **참고:** `upgrade`는 crates.io가 아니라 GitHub Release에서 바이너리를 받아옵니다. 업그레이드 후에도 `cargo install --list`는 이전 버전으로 보일 수 있으니, 실제 설치된 버전은 `breeze-wh --version`으로 확인하세요.
+
 ## 명령어
 
 - `breeze-wh install` — 서비스 설치 및 시작
@@ -48,12 +64,10 @@ breeze-wh install
 - `breeze-wh start` — 서비스 시작
 - `breeze-wh stop` — 서비스 중지
 - `breeze-wh status` — 현재 서비스 상태 출력
-- `breeze-wh upgrade` — GitHub Releases에서 최신 `breeze-wh.exe`를 받아 교체 (서비스 상태 유지)
+- `breeze-wh upgrade` — 최신 릴리스로 업그레이드 (위 섹션 참고)
 - `breeze-wh --version` — 설치된 버전 확인
 
 `install` / `uninstall` / `start` / `stop` / `upgrade`는 관리자 권한이 필요하지만, UAC로 자동 상승되므로 관리자 셸을 따로 띄울 필요는 없습니다.
-
-> **참고:** `upgrade`는 crates.io가 아니라 GitHub Release의 바이너리를 받아 갈아끼웁니다. 업그레이드 이후 cargo 레지스트리 메타데이터는 예전 버전으로 남아있을 수 있으니, 실제 설치된 버전은 `breeze-wh --version`으로 확인하세요.
 
 ## 구조
 
