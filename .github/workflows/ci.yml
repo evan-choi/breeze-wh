@@ -3,7 +3,23 @@ name: CI
 on:
   push:
     branches: [main]
+    paths:
+      - 'src/**'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'build.rs'
+      - 'app.rc'
+      - 'awh.exe.manifest'
+      - '.github/workflows/ci.yml'
   pull_request:
+    paths:
+      - 'src/**'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'build.rs'
+      - 'app.rc'
+      - 'awh.exe.manifest'
+      - '.github/workflows/ci.yml'
 
 jobs:
   build:
