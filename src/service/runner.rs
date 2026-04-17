@@ -104,6 +104,9 @@ fn run_service() -> anyhow::Result<()> {
 
     tracing::info!("service reported running");
 
+    // Startup is done — let the OS reclaim cold pages from config/SCM handshake.
+    crate::common::mem::trim_working_set();
+
     // Check for an existing active console session on startup
     let session_id = unsafe { WTSGetActiveConsoleSessionId() };
     if session_id != 0xFFFFFFFF {
