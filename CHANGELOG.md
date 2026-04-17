@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6](https://github.com/evan-choi/breeze-wh/compare/v0.1.5...v0.1.6) - 2026-04-17
+
+### Fixed
+
+- show elevated CLI command output in parent terminal
+
+### Other
+
+- add CLAUDE.md with commit convention and workflow guide
+
 ## [0.1.5](https://github.com/evan-choi/breeze-wh/compare/v0.1.4...v0.1.5) - 2026-04-17
 
 ### Added
