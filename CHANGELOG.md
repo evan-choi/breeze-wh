@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3](https://github.com/evan-choi/breeze-wh/compare/v0.1.2...v0.1.3) - 2026-04-17
+
+### Other
+
+- Merge pull request #6 from evan-choi/dev
+- aggressive size optimization in release profile
+
 ## [0.1.2](https://github.com/evan-choi/breeze-wh/compare/v0.1.1...v0.1.2) - 2026-04-17
 
 ### Fixed
