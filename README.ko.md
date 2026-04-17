@@ -43,7 +43,7 @@ breeze-wh install
 
 ## 명령어
 
-- `breeze-wh install` — 서비스 등록, 데이터 디렉터리 권한 부여, 자동 시작
+- `breeze-wh install` — 서비스 설치 및 시작
 - `breeze-wh uninstall` — 서비스 중지 및 삭제
 - `breeze-wh start` — 서비스 시작
 - `breeze-wh stop` — 서비스 중지
