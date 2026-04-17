@@ -32,6 +32,9 @@ pub fn run(config: BreezeConfig) -> anyhow::Result<()> {
         automation.AddFocusChangedEventHandler(None, &handler)?;
         tracing::info!("Focus event handler registered, waiting for events");
 
+        // Startup is done — let the OS reclaim cold pages from COM/UIA init.
+        crate::common::mem::trim_working_set();
+
         // Ctrl+C → break message loop
         ctrlc::set_handler(move || {
             tracing::info!("Shutdown signal received");
