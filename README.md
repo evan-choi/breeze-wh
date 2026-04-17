@@ -43,7 +43,7 @@ That's it. Breeze runs silently in the background.
 
 ## Commands
 
-- `breeze-wh install` — Register the service, grant Users access to the data dir, and start it
+- `breeze-wh install` — Install and start the service
 - `breeze-wh uninstall` — Stop and unregister the service
 - `breeze-wh start` — Start the service
 - `breeze-wh stop` — Stop the service
