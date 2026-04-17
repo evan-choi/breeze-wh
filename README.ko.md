@@ -43,15 +43,13 @@ breeze-wh install
 
 ## 명령어
 
-| 명령어 | 설명 |
-|---|---|
-| `breeze-wh install` | 서비스 등록, 데이터 디렉터리 권한 부여, 자동 시작 |
-| `breeze-wh uninstall` | 서비스 중지 및 삭제 |
-| `breeze-wh start` | 서비스 시작 |
-| `breeze-wh stop` | 서비스 중지 |
-| `breeze-wh status` | 현재 서비스 상태 출력 |
-| `breeze-wh upgrade` | GitHub Releases에서 최신 `breeze-wh.exe`를 받아 교체 (서비스 상태 유지) |
-| `breeze-wh --version` | 설치된 버전 확인 |
+- `breeze-wh install` — 서비스 등록, 데이터 디렉터리 권한 부여, 자동 시작
+- `breeze-wh uninstall` — 서비스 중지 및 삭제
+- `breeze-wh start` — 서비스 시작
+- `breeze-wh stop` — 서비스 중지
+- `breeze-wh status` — 현재 서비스 상태 출력
+- `breeze-wh upgrade` — GitHub Releases에서 최신 `breeze-wh.exe`를 받아 교체 (서비스 상태 유지)
+- `breeze-wh --version` — 설치된 버전 확인
 
 `install` / `uninstall` / `start` / `stop` / `upgrade`는 관리자 권한이 필요하지만, UAC로 자동 상승되므로 관리자 셸을 따로 띄울 필요는 없습니다.
 
