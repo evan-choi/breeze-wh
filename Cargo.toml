@@ -39,3 +39,10 @@ features = [
 
 [build-dependencies]
 embed-resource = "3"
+
+[profile.release]
+opt-level = "z"      # optimize for size
+lto = true           # link-time optimization
+codegen-units = 1    # better cross-crate optimization
+strip = true         # strip symbols
+panic = "abort"      # smaller binary (no unwinding)
