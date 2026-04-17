@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.5](https://github.com/evan-choi/breeze-wh/compare/v0.1.4...v0.1.5) - 2026-04-17
+
+### Added
+
+- grant Users modify access to data dir on install
+
+### Other
+
+- Merge pull request #10 from evan-choi/dev
+
 ## [0.1.4](https://github.com/evan-choi/breeze-wh/compare/v0.1.3...v0.1.4) - 2026-04-17
 
 ### Added
