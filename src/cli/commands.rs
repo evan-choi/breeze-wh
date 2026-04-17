@@ -25,11 +25,16 @@ pub fn check_service_exists() -> anyhow::Result<()> {
 
 pub fn run(args: &[String]) -> anyhow::Result<()> {
     match args.first().map(|s| s.as_str()) {
+        Some("--version" | "-V" | "version") => {
+            println!("breeze-wh {}", env!("CARGO_PKG_VERSION"));
+            Ok(())
+        }
         Some("install") => cmd_install(),
         Some("uninstall") => cmd_uninstall(),
         Some("start") => cmd_start(),
         Some("stop") => cmd_stop(),
         Some("status") => cmd_status(),
+        Some("upgrade") => cmd_upgrade(),
         _ => {
             eprintln!("Breeze-WH - Auto Windows Hello");
             eprintln!();
@@ -41,6 +46,7 @@ pub fn run(args: &[String]) -> anyhow::Result<()> {
             eprintln!("  start      Start the Breeze-WH service");
             eprintln!("  stop       Stop the Breeze-WH service");
             eprintln!("  status     Show the Breeze-WH service status");
+            eprintln!("  upgrade    Upgrade to the latest release from GitHub");
             eprintln!();
             eprintln!("Internal (used by the service):");
             eprintln!("  service    Run as Windows Service");
@@ -186,4 +192,164 @@ fn cmd_status() -> anyhow::Result<()> {
 
     println!("Service '{}': {}", SERVICE_NAME, state_label);
     Ok(())
+}
+
+const GITHUB_API_LATEST: &str = "https://api.github.com/repos/evan-choi/breeze-wh/releases/latest";
+const ASSET_NAME: &str = "breeze-wh.exe";
+
+fn cmd_upgrade() -> anyhow::Result<()> {
+    let current_version = env!("CARGO_PKG_VERSION");
+
+    // 1. Fetch latest release metadata from GitHub API
+    println!("Checking latest release...");
+    let resp = ureq::get(GITHUB_API_LATEST)
+        .set("User-Agent", "breeze-wh-updater")
+        .set("Accept", "application/vnd.github+json")
+        .call()
+        .context("Failed to reach GitHub API")?;
+
+    let json: serde_json::Value = resp
+        .into_json()
+        .context("Failed to parse GitHub API response")?;
+
+    let tag = json["tag_name"]
+        .as_str()
+        .context("latest release has no tag_name")?;
+    let latest_version = tag.trim_start_matches('v');
+
+    if latest_version == current_version {
+        println!("Already up to date (v{current_version}).");
+        return Ok(());
+    }
+    println!("Upgrading {current_version} -> {latest_version}");
+
+    // 2. Find the exe asset download URL
+    let assets = json["assets"].as_array().context("release has no assets")?;
+    let download_url = assets
+        .iter()
+        .find(|a| a["name"].as_str() == Some(ASSET_NAME))
+        .and_then(|a| a["browser_download_url"].as_str())
+        .with_context(|| format!("{ASSET_NAME} not found in release assets"))?;
+
+    // 3. Inspect service state
+    let manager = ServiceManager::local_computer(None::<&str>, ServiceManagerAccess::CONNECT)
+        .context("Failed to open service manager")?;
+
+    let svc = manager
+        .open_service(
+            SERVICE_NAME,
+            ServiceAccess::QUERY_STATUS | ServiceAccess::STOP | ServiceAccess::START,
+        )
+        .ok();
+
+    let was_running = match &svc {
+        Some(s) => {
+            let state = s.query_status()?.current_state;
+            matches!(state, ServiceState::Running | ServiceState::StartPending)
+        }
+        None => false,
+    };
+    let service_installed = svc.is_some();
+
+    // 4. Stop service if running
+    if was_running {
+        println!("Stopping service...");
+        if let Some(s) = &svc {
+            s.stop().context("Failed to stop service")?;
+            wait_for_stopped(s)?;
+        }
+    }
+
+    // 5. Download new exe
+    println!("Downloading {ASSET_NAME}...");
+    let mut reader = ureq::get(download_url)
+        .set("User-Agent", "breeze-wh-updater")
+        .call()
+        .context("Failed to download exe")?
+        .into_reader();
+    let mut buf = Vec::new();
+    std::io::copy(&mut reader, &mut buf).context("Failed to read download stream")?;
+    println!("Downloaded {} bytes", buf.len());
+
+    // 6. Replace current exe using the Windows rename trick
+    replace_current_exe(&buf).context("Failed to replace exe")?;
+
+    println!("Upgraded to v{latest_version}.");
+
+    // 7. Restart service if it was running
+    if was_running {
+        // Re-open with START access since old handle may be stale after exe swap
+        let restart_svc = manager
+            .open_service(SERVICE_NAME, ServiceAccess::START)
+            .context("Failed to re-open service for restart")?;
+        restart_svc
+            .start(&["service"])
+            .context("Failed to start service after upgrade")?;
+        println!("Service restarted.");
+    } else if service_installed {
+        println!("Service was not running before upgrade; left stopped.");
+    } else {
+        println!("Service is not installed; exe replaced.");
+    }
+
+    eprintln!();
+    eprintln!(
+        "Note: cargo's registry metadata still reflects the old version. \
+         Run `breeze-wh --version` or check the binary directly to confirm."
+    );
+
+    Ok(())
+}
+
+fn wait_for_stopped(svc: &windows_service::service::Service) -> anyhow::Result<()> {
+    for _ in 0..60 {
+        let state = svc.query_status()?.current_state;
+        if state == ServiceState::Stopped {
+            return Ok(());
+        }
+        std::thread::sleep(std::time::Duration::from_millis(500));
+    }
+    anyhow::bail!("Timed out waiting for service to stop")
+}
+
+/// Replace the running exe on Windows.
+/// Windows blocks overwriting a running exe, but does allow renaming it.
+/// We rename the current exe to `.old`, then write the new bytes to the original path,
+/// and schedule the `.old` file for deletion on next reboot.
+fn replace_current_exe(new_bytes: &[u8]) -> anyhow::Result<()> {
+    let current = std::env::current_exe()?;
+    let old_path = current.with_extension("exe.old");
+
+    // Clean up any previous .old left behind
+    let _ = std::fs::remove_file(&old_path);
+
+    // Rename current running exe (Windows allows this even while running)
+    std::fs::rename(&current, &old_path).context("Failed to rename current exe")?;
+
+    // Write new exe to original path
+    if let Err(e) = std::fs::write(&current, new_bytes) {
+        // Roll back the rename on failure
+        let _ = std::fs::rename(&old_path, &current);
+        return Err(e).context("Failed to write new exe");
+    }
+
+    // Schedule .old for deletion on next reboot (we can't delete it now — we're running it)
+    schedule_delete_on_reboot(&old_path);
+    Ok(())
+}
+
+fn schedule_delete_on_reboot(path: &std::path::Path) {
+    use std::ffi::OsStr;
+    use std::os::windows::ffi::OsStrExt;
+    use windows::Win32::Storage::FileSystem::{MOVEFILE_DELAY_UNTIL_REBOOT, MoveFileExW};
+    use windows::core::PCWSTR;
+
+    let wide: Vec<u16> = OsStr::new(path).encode_wide().chain(Some(0)).collect();
+    unsafe {
+        let _ = MoveFileExW(
+            PCWSTR(wide.as_ptr()),
+            PCWSTR::null(),
+            MOVEFILE_DELAY_UNTIL_REBOOT,
+        );
+    }
 }

@@ -19,8 +19,10 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 tracing-appender = "0.2"
 serde = { version = "1", features = ["derive"] }
+serde_json = "1"
 toml = "0.8"
 ctrlc = "3"
+ureq = { version = "2", default-features = false, features = ["tls", "json"] }
 
 [dependencies.windows]
 version = "0.61"
@@ -35,6 +37,7 @@ features = [
     "Win32_UI_Shell",
     "Win32_System_Registry",
     "Win32_System_Console",
+    "Win32_Storage_FileSystem",
 ]
 
 [build-dependencies]

@@ -23,7 +23,7 @@ fn main() -> anyhow::Result<()> {
         }
 
         // CLI commands (require elevation)
-        Some(cmd @ ("install" | "uninstall" | "start" | "stop")) => {
+        Some(cmd @ ("install" | "uninstall" | "start" | "stop" | "upgrade")) => {
             if !common::elevation::is_elevated() {
                 // Quick status check — give useful error before UAC prompt
                 if matches!(cmd, "start" | "stop" | "uninstall") {
