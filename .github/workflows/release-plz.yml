@@ -58,6 +58,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           $tag = "v${{ fromJSON(steps.release.outputs.releases)[0].version }}"
-          $name = "breeze-wh-$tag-windows-x86_64.exe"
-          Copy-Item target/release/breeze-wh.exe $name
-          gh release upload $tag $name --repo "${{ github.repository }}"
+          gh release upload $tag target/release/breeze-wh.exe --repo "${{ github.repository }}"
