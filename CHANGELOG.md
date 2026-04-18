@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.8](https://github.com/evan-choi/breeze-wh/compare/v0.1.7...v0.1.8) - 2026-04-17
+
+### Other
+
+- replace LICENSE-APACHE stub with full Apache-2.0 text
+- shrink helper/service runtime memory
+
 ## [0.1.7](https://github.com/evan-choi/breeze-wh/compare/v0.1.6...v0.1.7) - 2026-04-17
 
 ### Other
